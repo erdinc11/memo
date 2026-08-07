@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4efe7">
+  <meta name="description" content="Mehmet Ali Dülger — Tuzluçayır, Ankara merkezli Boş İşler Müdürü. Erteleme, uyku, panik ve sonuçsuz toplantılarda uzmanlaşmış yaratıcı hizmetler.">
+  <title>Boş İşler Müdürü — Mehmet Ali Dülger</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+    :root {
+      color-scheme: light;
+      --paper: #f4efe7;
+      --paper-deep: #e8ddcf;
+      --ink: #171716;
+      --muted: #665f56;
+      --line: rgba(23, 23, 22, .16);
+      --orange: #f05b37;
+      --orange-dark: #c84021;
+      --lime: #d9ff68;
+      --blue: #8fdbff;
+      --violet: #c9b5ff;
+      --shadow: 0 24px 80px rgba(66, 50, 32, .15);
+      --radius-xl: 34px;
+      --radius-lg: 22px;
+      --radius-md: 14px;
+      --ease: cubic-bezier(.22, .8, .22, 1);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      overflow-x: hidden;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    body.is-locked { overflow: hidden; }
+    ::selection { background: var(--orange); color: #fff; }
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea { font: inherit; }
+    button { border: 0; cursor: pointer; }
+    img { display: block; max-width: 100%; }
+
+    .skip-link {
+      position: fixed;
+      left: 16px;
+      top: 16px;
+      z-index: 100;
+      padding: 12px 16px;
+      background: var(--ink);
+      color: #fff;
+      transform: translateY(-150%);
+      transition: transform .25s ease;
+    }
+    .skip-link:focus { transform: translateY(0); }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+      opacity: .055;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.75'/%3E%3C/svg%3E");
+      mix-blend-mode: multiply;
+    }
+
+    .loader {
+      position: fixed;
+      inset: 0;
+      z-index: 99;
+      display: grid;
+      place-items: center;
+      background: var(--ink);
+      color: var(--paper);
+      transition: opacity .7s ease, visibility .7s ease;
+    }
+    .loader.is-done { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loader-inner { width: min(430px, calc(100% - 40px)); }
+    .loader-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      color: var(--lime);
+      font: 11px 'DM Mono', monospace;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .loader-bar { height: 4px; overflow: hidden; background: rgba(244, 239, 231, .2); }
+    .loader-bar span { display: block; width: 100%; height: 100%; background: var(--lime); transform-origin: left; animation: load 1.5s var(--ease) forwards; }
+
+    .site-shell { position: relative; isolation: isolate; width: 100%; max-width: 100%; overflow-x: clip; }
+    .container { width: min(1320px, calc(100% - 48px)); margin: 0 auto; }
+    .section { position: relative; padding: clamp(112px, 16vw, 260px) 0; }
+    .section-tight { padding: 84px 0; }
+
+    .site-nav {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 26px;
+      width: min(1240px, calc(100% - 40px));
+      min-height: 58px;
+      padding: 8px 10px 8px 18px;
+      border: 1px solid rgba(23,23,22,.12);
+      border-radius: 100px;
+      background: rgba(244,239,231,.78);
+      box-shadow: 0 12px 45px rgba(61, 42, 20, .08);
+      backdrop-filter: blur(18px);
+      transform: translateX(-50%);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -.04em; white-space: nowrap; }
+    .nav-mark { width: 20px; height: 20px; background: var(--orange); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); }
+    .nav-links { display: flex; align-items: center; gap: 24px; color: var(--muted); font-size: 13px; font-weight: 600; }
+    .nav-links a { position: relative; padding: 10px 0; }
+    .nav-links a::after { content: ''; position: absolute; left: 0; bottom: 4px; width: 100%; height: 2px; background: var(--orange); transform: scaleX(0); transform-origin: right; transition: transform .35s var(--ease); }
+    .nav-links a:hover::after, .nav-links a:focus-visible::after { transform: scaleX(1); transform-origin: left; }
+    .nav-cta, .button-primary { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 42px; padding: 0 17px; border-radius: 100px; background: var(--ink); color: var(--paper); font-size: 12px; font-weight: 700; transition: transform .35s var(--ease), background .35s ease, color .35s ease; }
+    .nav-cta:hover, .nav-cta:focus-visible, .button-primary:hover, .button-primary:focus-visible { background: var(--orange); color: #fff; transform: translateY(-3px); }
+    .nav-toggle { display: none; width: 42px; height: 42px; border-radius: 50%; background: var(--ink); color: var(--paper); }
+
+    .hero { min-height: 100svh; padding-top: 190px; overflow: clip; }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.02fr) minmax(390px, .98fr); gap: clamp(48px, 9vw, 140px); align-items: center; }
+    .eyebrow, .mono { font: 11px 'DM Mono', monospace; letter-spacing: .13em; text-transform: uppercase; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 28px; color: var(--orange-dark); }
+    .eyebrow::before { content: ''; width: 30px; height: 1px; background: var(--orange-dark); }
+    h1, h2, h3, p { margin-top: 0; }
+    .hero h1 { max-width: 1180px; margin-bottom: 30px; font-size: clamp(3.7rem, 8.3vw, 9rem); line-height: .89; letter-spacing: -.095em; font-weight: 700; }
+    .hero h1 .outline { color: transparent; -webkit-text-stroke: 1.5px var(--ink); }
+    .hero h1 em { color: var(--orange); font-style: normal; }
+    .hero-copy { max-width: 520px; color: var(--muted); font-size: clamp(17px, 1.7vw, 22px); line-height: 1.3; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+    .button-primary { min-height: 54px; padding: 0 22px; background: var(--orange); color: #fff; font-size: 14px; }
+    .button-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 54px; padding: 0 22px; border: 1px solid var(--line); border-radius: 100px; color: var(--ink); font-size: 14px; font-weight: 700; transition: background .35s ease, color .35s ease, transform .35s var(--ease); }
+    .button-secondary:hover, .button-secondary:focus-visible { background: var(--ink); color: var(--paper); transform: translateY(-3px); }
+    .arrow { display: inline-block; font-size: 18px; transition: transform .35s var(--ease); }
+    a:hover .arrow, button:hover .arrow { transform: translateX(4px); }
+    .hero-note { display: flex; align-items: center; gap: 10px; margin-top: 38px; color: var(--muted); font-size: 13px; }
+    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 0 0 rgba(240,91,55,.55); animation: live 2s infinite; }
+    .hero-visual { position: relative; min-height: min(680px, 68vw); }
+    .hero-photo-wrap { position: absolute; inset: 0 0 0 12%; overflow: hidden; border-radius: 48% 48% 0 48%; background: var(--paper-deep); transform: rotate(3deg); box-shadow: var(--shadow); }
+    .hero-photo-wrap::after { content: ''; position: absolute; inset: 0; background: linear-gradient(140deg, rgba(23,23,22,.02), rgba(23,23,22,.48)); mix-blend-mode: multiply; }
+    .hero-photo-wrap img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.75) contrast(1.1); transform: scale(1.12); }
+    .hero-photo-label { position: absolute; right: -3%; bottom: 12%; z-index: 2; max-width: 180px; padding: 17px 18px; background: var(--lime); color: var(--ink); font-weight: 700; line-height: 1; transform: rotate(-7deg); box-shadow: 9px 9px 0 var(--ink); }
+    .hero-photo-label small { display: block; margin-top: 8px; font: 10px 'DM Mono', monospace; line-height: 1.3; text-transform: uppercase; }
+    .scribble { position: absolute; left: -8%; top: 10%; z-index: 2; width: 108px; height: 108px; border: 2px solid var(--orange); border-radius: 50%; opacity: .8; animation: orbit 8s linear infinite; }
+    .scribble::before, .scribble::after { content: ''; position: absolute; background: var(--orange); }
+    .scribble::before { width: 2px; height: 140%; left: 50%; top: -20%; transform: rotate(35deg); }
+    .scribble::after { width: 140%; height: 2px; left: -20%; top: 50%; transform: rotate(-35deg); }
+
+    .ticker-wrap { overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); transform: rotate(-2deg) scale(1.03); background: var(--orange); color: var(--paper); }
+    .ticker { display: flex; width: max-content; animation: marquee 26s linear infinite; }
+    .ticker span { padding: 18px 28px; font-size: clamp(19px, 2.5vw, 34px); font-weight: 700; letter-spacing: -.05em; white-space: nowrap; }
+    .ticker span:nth-child(even) { color: var(--lime); }
+
+    .statement { padding-top: clamp(130px, 18vw, 280px); }
+    .statement-grid { display: grid; grid-template-columns: minmax(150px, .26fr) minmax(0, 1fr); gap: 8%; }
+    .side-note { color: var(--muted); padding-top: 10px; }
+    .side-note span { display: block; max-width: 150px; margin-top: 15px; font-size: 14px; line-height: 1.35; }
+    .statement h2 { max-width: 980px; margin-bottom: 34px; font-size: clamp(3rem, 7vw, 7.9rem); line-height: .9; letter-spacing: -.085em; }
+    .statement h2 em { color: var(--orange); font-style: normal; }
+    .inline-image { display: inline-block; width: clamp(76px, 11vw, 140px); height: clamp(43px, 6vw, 78px); margin: 0 10px; overflow: hidden; border-radius: 100px; vertical-align: 12%; transform: rotate(-5deg); }
+    .inline-image img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.6) sepia(.15); }
+    .statement-body { max-width: 690px; margin-left: auto; color: var(--muted); font-size: clamp(17px, 1.8vw, 23px); line-height: 1.35; }
+
+    .bento-section { padding-top: 80px; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 40px; }
+    .section-head h2 { max-width: 700px; margin-bottom: 0; font-size: clamp(2.8rem, 5.5vw, 6rem); line-height: .9; letter-spacing: -.08em; }
+    .section-head p { max-width: 300px; margin-bottom: 5px; color: var(--muted); line-height: 1.35; }
+    .bento-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(220px, 1fr); grid-auto-flow: dense; gap: 14px; }
+    .bento-card { position: relative; min-height: 220px; overflow: hidden; padding: 26px; border-radius: var(--radius-lg); background: var(--paper-deep); transition: transform .55s var(--ease), box-shadow .55s var(--ease); }
+    .bento-card:hover { transform: translateY(-8px) rotate(-.5deg); box-shadow: var(--shadow); }
+    .bento-card.tall { grid-column: span 2; grid-row: span 2; }
+    .bento-card.wide { grid-column: span 2; }
+    .bento-card.one { grid-column: span 1; }
+    .bento-card.image-card { padding: 0; color: #fff; background: var(--ink); }
+    .bento-card.image-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(23,23,22,0) 18%, rgba(23,23,22,.75) 100%); }
+    .bento-card.image-card img { width: 100%; height: 100%; min-height: 100%; object-fit: cover; filter: grayscale(.2) contrast(1.08); transition: transform .8s var(--ease), filter .8s ease; }
+    .bento-card.image-card:hover img { transform: scale(1.08); filter: grayscale(0) contrast(1.12); }
+    .card-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+    .card-content h3 { max-width: 430px; margin-bottom: 12px; font-size: clamp(1.65rem, 3vw, 3.4rem); line-height: .95; letter-spacing: -.07em; }
+    .card-content p { max-width: 330px; margin-bottom: 0; color: var(--muted); line-height: 1.3; }
+    .image-card .card-content p, .image-card .card-content h3 { color: #fff; }
+    .card-index { font: 11px 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; opacity: .62; }
+    .card-sticker { align-self: start; width: 110px; height: 110px; display: grid; place-items: center; border-radius: 50%; background: var(--lime); color: var(--ink); font-size: 13px; font-weight: 700; line-height: 1.05; text-align: center; transform: rotate(9deg); animation: float 4.5s ease-in-out infinite; }
+    .panic-card { background: var(--violet); }
+    .panic-orbit { position: absolute; right: 30px; bottom: 26px; width: 100px; height: 100px; border: 1px solid rgba(23,23,22,.35); border-radius: 50%; animation: panic 2.5s ease-in-out infinite; }
+    .panic-orbit::before, .panic-orbit::after { content: ''; position: absolute; inset: 14px; border: 1px solid rgba(23,23,22,.35); border-radius: 50%; }
+    .panic-orbit::after { inset: 28px; background: var(--ink); border: 0; }
+    .quote-card { background: var(--blue); }
+    .quote-mark { position: absolute; right: 20px; top: 5px; font-size: 130px; line-height: 1; opacity: .17; }
+    .card-footer { display: flex; align-items: end; justify-content: space-between; gap: 16px; }
+
+    .services { background: var(--ink); color: var(--paper); }
+    .services::before { content: ''; position: absolute; width: 460px; height: 460px; right: -120px; top: 15%; border-radius: 50%; background: var(--orange); filter: blur(120px); opacity: .2; pointer-events: none; }
+    .services-grid { display: grid; grid-template-columns: minmax(240px, .7fr) minmax(0, 1fr); gap: clamp(40px, 9vw, 150px); align-items: start; }
+    .pin-column { min-height: 450px; }
+    .services h2 { max-width: 540px; margin: 20px 0 26px; font-size: clamp(3.2rem, 6.5vw, 7.4rem); line-height: .87; letter-spacing: -.09em; }
+    .services .eyebrow { color: var(--lime); }
+    .services .eyebrow::before { background: var(--lime); }
+    .services-intro { max-width: 370px; color: rgba(244,239,231,.66); font-size: 17px; line-height: 1.4; }
+    .service-stack { display: grid; gap: 20px; }
+    .service-card { position: relative; display: grid; grid-template-columns: 1fr 170px; min-height: 235px; overflow: hidden; border-top: 1px solid rgba(244,239,231,.26); background: #242423; transition: background .4s ease, transform .5s var(--ease); }
+    .service-card:hover { background: #30302e; transform: translateX(-8px); }
+    .service-card-copy { display: flex; flex-direction: column; justify-content: space-between; padding: 24px 24px 24px 0; }
+    .service-card h3 { max-width: 480px; margin: 18px 0 8px; font-size: clamp(2rem, 4vw, 4.3rem); line-height: .91; letter-spacing: -.08em; }
+    .service-card p { max-width: 420px; margin: 0; color: rgba(244,239,231,.6); line-height: 1.35; }
+    .service-card img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(.8) contrast(1.2); opacity: .78; transition: transform .8s var(--ease), filter .8s ease, opacity .8s ease; }
+    .service-card:hover img { transform: scale(1.09); filter: grayscale(0) contrast(1.12); opacity: 1; }
+    .service-number { color: var(--lime); font: 12px 'DM Mono', monospace; }
+    .service-link { display: inline-flex; align-items: center; gap: 8px; color: var(--lime); font-size: 12px; font-weight: 700; }
+
+    .accordion-section { background: var(--lime); }
+    .accordion-layout { display: grid; grid-template-columns: minmax(220px, .65fr) minmax(0, 1.35fr); gap: 8%; }
+    .accordion-layout h2 { max-width: 510px; margin: 20px 0 0; font-size: clamp(3rem, 6vw, 7rem); line-height: .88; letter-spacing: -.09em; }
+    .accordion-list { border-top: 1px solid rgba(23,23,22,.34); }
+    .accordion-item { border-bottom: 1px solid rgba(23,23,22,.34); }
+    .accordion-trigger { display: flex; align-items: center; justify-content: space-between; gap: 24px; width: 100%; padding: 24px 0; background: transparent; color: var(--ink); text-align: left; }
+    .accordion-title { font-size: clamp(1.4rem, 2.3vw, 2.6rem); font-weight: 700; letter-spacing: -.06em; }
+    .accordion-icon { flex: 0 0 auto; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--ink); border-radius: 50%; font-size: 23px; font-weight: 400; transition: transform .35s var(--ease), background .35s ease; }
+    .accordion-trigger[aria-expanded="true"] .accordion-icon { background: var(--orange); color: #fff; transform: rotate(45deg); }
+    .accordion-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .55s var(--ease); }
+    .accordion-panel > div { overflow: hidden; }
+    .accordion-trigger[aria-expanded="true"] + .accordion-panel { grid-template-rows: 1fr; }
+    .accordion-panel p { max-width: 650px; padding: 0 70px 27px 0; color: rgba(23,23,22,.7); font-size: 16px; line-height: 1.45; }
+
+    .carousel-section { padding-bottom: 160px; }
+    .carousel-head { display: flex; align-items: end; justify-content: space-between; gap: 28px; margin-bottom: 46px; }
+    .carousel-head h2 { max-width: 680px; margin: 0; font-size: clamp(3rem, 6vw, 7rem); line-height: .88; letter-spacing: -.09em; }
+    .carousel-controls { display: flex; gap: 8px; }
+    .carousel-button { display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid var(--line); border-radius: 50%; background: transparent; font-size: 22px; transition: background .3s ease, color .3s ease, transform .3s var(--ease); }
+    .carousel-button:hover, .carousel-button:focus-visible { background: var(--ink); color: var(--paper); transform: translateY(-3px); }
+    .carousel-window { overflow: hidden; }
+    .carousel-track { display: flex; transition: transform .65s var(--ease); }
+    .testimonial { min-width: 100%; display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: clamp(24px, 7vw, 100px); align-items: center; padding: clamp(25px, 5vw, 70px); border-radius: var(--radius-xl); background: var(--paper-deep); }
+    .testimonial-portrait { position: relative; width: 180px; height: 220px; overflow: hidden; border-radius: 50% 50% 0 50%; transform: rotate(-5deg); }
+    .testimonial-portrait img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.08); }
+    .testimonial-portrait::after { content: ''; position: absolute; inset: 0; background: var(--orange); mix-blend-mode: screen; opacity: .55; }
+    .testimonial blockquote { max-width: 760px; margin: 0 0 24px; font-size: clamp(2rem, 4.3vw, 5rem); line-height: .95; letter-spacing: -.075em; }
+    .testimonial cite { color: var(--muted); font-size: 14px; font-style: normal; line-height: 1.4; }
+    .carousel-dots { display: flex; gap: 7px; margin-top: 18px; }
+    .carousel-dot { width: 7px; height: 7px; padding: 0; border-radius: 50%; background: var(--line); }
+    .carousel-dot.is-active { width: 30px; border-radius: 10px; background: var(--orange); }
+
+    .action { padding: clamp(130px, 17vw, 240px) 0 90px; background: var(--orange); color: #fff; overflow: hidden; }
+    .action::before { content: 'BOŞ İŞLER'; position: absolute; right: -5%; bottom: -14%; color: rgba(255,255,255,.11); font-size: clamp(100px, 22vw, 330px); font-weight: 700; letter-spacing: -.1em; line-height: .8; white-space: nowrap; transform: rotate(-9deg); pointer-events: none; }
+    .action-inner { position: relative; z-index: 1; max-width: 1100px; }
+    .action h2 { max-width: 1000px; margin-bottom: 38px; font-size: clamp(4rem, 10vw, 11rem); line-height: .78; letter-spacing: -.11em; }
+    .action .button-primary { background: #fff; color: var(--ink); }
+    .action .button-primary:hover, .action .button-primary:focus-visible { background: var(--lime); }
+    .footer { padding: 28px 0 34px; background: var(--orange); color: #fff; }
+    .footer-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-top: 26px; border-top: 1px solid rgba(255,255,255,.35); font-size: 13px; }
+    .footer-links { display: flex; gap: 18px; color: rgba(255,255,255,.72); }
+    .footer-links a:hover { color: #fff; }
+    .credits { margin-top: 25px; color: rgba(255,255,255,.66); font-size: 11px; line-height: 1.5; }
+    .credits a { text-decoration: underline; text-underline-offset: 2px; }
+
+    .modal { width: min(620px, calc(100% - 32px)); padding: 0; border: 0; border-radius: var(--radius-lg); background: var(--paper); color: var(--ink); box-shadow: 0 30px 100px rgba(0,0,0,.3); }
+    .modal::backdrop { background: rgba(23,23,22,.68); backdrop-filter: blur(8px); }
+    .modal-inner { padding: 32px; }
+    .modal-close { float: right; display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 50%; background: transparent; font-size: 22px; }
+    .modal h2 { max-width: 450px; margin: 32px 0 28px; font-size: clamp(2.6rem, 7vw, 5rem); line-height: .88; letter-spacing: -.08em; }
+    .form-grid { display: grid; gap: 14px; }
+    .form-field { display: grid; gap: 7px; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .form-field input, .form-field textarea { width: 100%; padding: 14px 15px; border: 1px solid var(--line); border-radius: 10px; outline: 0; background: #fffaf4; color: var(--ink); }
+    .form-field input:focus, .form-field textarea:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(240,91,55,.16); }
+    .form-field textarea { min-height: 110px; resize: vertical; }
+    .form-submit { width: 100%; margin-top: 5px; }
+    .form-status { min-height: 20px; margin: 14px 0 0; color: var(--orange-dark); font-size: 13px; }
+
+    [data-reveal] { opacity: 0; transform: translateY(28px); }
+    .is-visible { opacity: 1; transform: translateY(0); transition: opacity .8s ease, transform .8s var(--ease); }
+    .word { display: inline-block; opacity: .1; transform: translateY(12px); }
+    .word.is-word-visible { opacity: 1; transform: translateY(0); transition: opacity .55s ease, transform .55s var(--ease); }
+
+    @keyframes load { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    @keyframes live { 0%, 100% { box-shadow: 0 0 0 0 rgba(240,91,55,.5); } 50% { box-shadow: 0 0 0 8px rgba(240,91,55,0); } }
+    @keyframes marquee { to { transform: translateX(-50%); } }
+    @keyframes orbit { to { transform: rotate(360deg); } }
+    @keyframes float { 0%, 100% { transform: rotate(9deg) translateY(0); } 50% { transform: rotate(5deg) translateY(-10px); } }
+    @keyframes panic { 0%, 100% { transform: scale(.78) rotate(0); opacity: .55; } 50% { transform: scale(1.15) rotate(12deg); opacity: 1; } }
+
+    @media (max-width: 900px) {
+      .container { width: min(100% - 32px, 680px); }
+      .site-nav { width: calc(100% - 24px); top: 12px; }
+      .nav-toggle { display: grid; place-items: center; }
+      .nav-links { position: absolute; left: 0; right: 0; top: calc(100% + 10px); display: grid; gap: 0; padding: 10px; border: 1px solid var(--line); border-radius: 24px; background: rgba(244,239,231,.95); box-shadow: var(--shadow); transform: translateY(-10px); opacity: 0; visibility: hidden; transition: opacity .3s ease, transform .3s ease, visibility .3s; }
+      .nav-links.is-open { opacity: 1; visibility: visible; transform: translateY(0); }
+      .nav-links a { padding: 14px 12px; }
+      .nav-cta { display: none; }
+      .hero { padding-top: 135px; }
+      .hero-grid, .services-grid, .accordion-layout { grid-template-columns: 1fr; }
+      .hero-visual { min-height: 570px; margin-top: 35px; }
+      .pin-column { min-height: auto; }
+      .service-stack { margin-top: 45px; }
+      .bento-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 230px; }
+      .bento-card.tall { grid-column: span 2; grid-row: span 1; }
+      .bento-card.wide { grid-column: span 2; }
+      .statement-grid { grid-template-columns: 1fr; gap: 28px; }
+      .statement-body { margin-left: 0; }
+      .accordion-layout h2 { margin-bottom: 25px; }
+    }
+
+    @media (max-width: 620px) {
+      .container { width: calc(100% - 28px); }
+      .nav-brand { font-size: 13px; }
+      .nav-mark { width: 17px; height: 17px; }
+      .hero h1 { font-size: clamp(3.45rem, 16vw, 6.2rem); }
+      .hero-visual { min-height: 410px; }
+      .hero-photo-wrap { inset: 0 0 0 4%; }
+      .hero-photo-label { right: 0; bottom: 6%; }
+      .scribble { left: -7%; top: 4%; transform: scale(.7); }
+      .bento-grid { gap: 10px; grid-auto-rows: minmax(185px, auto); }
+      .bento-card { min-height: 185px; padding: 19px; }
+      .bento-card.tall, .bento-card.wide { grid-column: span 2; }
+      .card-content h3 { font-size: 2rem; }
+      .card-sticker { width: 80px; height: 80px; font-size: 11px; }
+      .service-card { grid-template-columns: minmax(0, 1fr) 94px; min-height: 210px; }
+      .service-card-copy { padding: 18px 16px 18px 0; }
+      .service-card h3 { font-size: 2.1rem; }
+      .service-card p { font-size: 13px; }
+      .accordion-trigger { padding: 20px 0; }
+      .accordion-title { font-size: 1.4rem; }
+      .accordion-panel p { padding-right: 12px; font-size: 14px; }
+      .testimonial { grid-template-columns: 1fr; gap: 26px; padding: 26px; }
+      .testimonial-portrait { width: 115px; height: 145px; }
+      .testimonial blockquote { font-size: 2.2rem; }
+      .footer-row { align-items: start; flex-direction: column; }
+      .footer-links { flex-wrap: wrap; }
+      .modal-inner { padding: 24px 20px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      [data-reveal], .word { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#icerik">İçeriğe geç</a>
+  <div class="loader" aria-hidden="true">
+    <div class="loader-inner">
+      <div class="loader-top"><span>Boş işler yükleniyor</span><span>100%</span></div>
+      <div class="loader-bar"><span></span></div>
+    </div>
+  </div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <header class="site-nav">
+    <a class="nav-brand" href="#top" aria-label="Boş İşler Müdürü ana sayfa"><span class="nav-mark" aria-hidden="true"></span><span>MEHMET ALİ DÜLGER</span></a>
+    <nav class="nav-links" aria-label="Ana navigasyon">
+      <a href="#hikaye">Hikâye</a>
+      <a href="#hizmetler">Hizmetler</a>
+      <a href="#yorumlar">Yorumlar</a>
+    </nav>
+    <a class="nav-cta" href="#iletisim">İş ver</a>
+    <button class="nav-toggle" type="button" aria-label="Menüyü aç" aria-expanded="false">+</button>
+  </header>
+
+  <main id="icerik" class="site-shell">
+    <section id="top" class="section hero">
+      <div class="container hero-grid">
+        <div data-reveal>
+          <p class="eyebrow">Boş işler müdürlüğü / Tuzluçayır</p>
+          <h1>İşi <span class="outline">ertelemek</span> de bir <em>vizyon.</em></h1>
+          <p class="hero-copy">Mehmet Ali Dülger, en iyi yaptığı şey sözlerini tutmamak, ertelemek, uyumak ve panik atak geçirmek olan; verilen sözleri zamanında tutmamak konusunda Ankara’nın referans noktası.</p>
+          <div class="hero-actions">
+            <a class="button-primary magnetic" href="#hizmetler">Kapasiteyi gör <span class="arrow">↗</span></a>
+            <button class="button-secondary magnetic" type="button" data-open-modal>İş birliği başlat <span class="arrow">↗</span></button>
+          </div>
+          <p class="hero-note"><span class="live-dot" aria-hidden="true"></span>Şu anda müsait değil. Büyük ihtimalle uyuyor.</p>
+        </div>
+        <div class="hero-visual" data-reveal>
+          <div class="scribble" aria-hidden="true"></div>
+          <figure class="hero-photo-wrap">
+            <img src="assets/atakule-ankara.jpg" alt="Ankara'da Atakule manzarası">
+          </figure>
+          <div class="hero-photo-label">Tuzluçayır<br>Ankara<small>Boş iş üretim üssü</small></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ticker-wrap" aria-label="Hizmet mottosu">
+      <div class="ticker">
+        <span>Acil zengin olmamız lazım</span><span>Yarın kesin</span><span>Acil zengin olmamız lazım</span><span>Yarın kesin</span><span>Acil zengin olmamız lazım</span><span>Yarın kesin</span><span>Acil zengin olmamız lazım</span><span>Yarın kesin</span>
+      </div>
+    </div>
+
+    <section id="hikaye" class="section statement">
+      <div class="container statement-grid">
+        <div class="side-note mono" data-reveal>Mehmet Ali Dülger<span>Planı olanları da, planı olmayanları da erteler.</span></div>
+        <div>
+          <h2 data-scrub>Sözünü tutmadığı her gün <span class="inline-image"><img src="assets/turkish-tea.jpg" alt="İnce belli bardakta Türk çayı"></span> daha da <em>özgürleşiyor.</em></h2>
+          <p class="statement-body" data-reveal>Bir işi gerçekten yapmak yerine onun hakkında uzun uzun konuşmayı; işi son dakikaya bırakıp sonra panik atak geçirmeyi; toplantıya beş dakika kala “acil zengin olmamız lazım” demeyi seçiyor. Bu bir kusur değil, Tuzluçayır çıkışlı bir çalışma modeli.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section bento-section">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <h2>Çalışma biçimi. Bilimsel değil, tanıdık.</h2>
+          <p>Uzmanlık alanlarını tek bir yerde topladık. Sonuçlar kişiden kişiye değişir; erteleme oranı değişmez.</p>
+        </div>
+        <div class="bento-grid" data-reveal>
+          <article class="bento-card tall image-card">
+            <img src="assets/sleeping-office.jpg" alt="Ofiste masada uyuyan çalışan" loading="lazy">
+            <div class="card-content">
+              <span class="card-index">Uyku odaklı liderlik</span>
+              <div><h3>Uyumak. Çünkü uyku, yapılmamış işlerin en konforlu hali.</h3><p>Alarm kurulur. Alarm ertelenir. Gün, kendi kendine geçer.</p></div>
+            </div>
+          </article>
+          <article class="bento-card wide quote-card">
+            <div class="card-content">
+              <span class="card-index">Söz yönetimi</span>
+              <div><h3>“Kesin hallederiz” cümlesini geleceğe devretme sanatı.</h3><p>Verilen sözler, uygun koşullarda belirsiz bir tarihe taşınır.</p></div>
+            </div>
+            <span class="quote-mark" aria-hidden="true">“</span>
+          </article>
+          <article class="bento-card one panic-card">
+            <div class="card-content">
+              <span class="card-index">Kriz yönetimi</span>
+              <div><h3>Panik atak geçirmek</h3><p>Son dakika enerjisi, sıfır sonuç.</p></div>
+            </div>
+            <div class="panic-orbit" aria-hidden="true"></div>
+          </article>
+          <article class="bento-card one image-card">
+            <img src="assets/messy-desk.jpg" alt="Dağınık masa ve laptop" loading="lazy">
+            <div class="card-content">
+              <span class="card-index">Erteleme estetiği</span>
+              <div class="card-footer"><h3>Yapılacaklar listesi, dekor.</h3><span class="card-sticker">Bugün<br>değil</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="hizmetler" class="section services">
+      <div class="container services-grid">
+        <div class="pin-column" data-reveal>
+          <p class="eyebrow">Hizmet menüsü</p>
+          <h2>Boş işinizi ciddiye alır.</h2>
+          <p class="services-intro">Kendisi hiçbir işi zamanında yapmaz. Ama yapılmamış bir işin etrafında atmosfer oluşturmakta gerçekten iyidir.</p>
+        </div>
+        <div class="service-stack">
+          <article class="service-card" data-reveal>
+            <div class="service-card-copy"><div><span class="service-number">01 / SÖZLÜ İLETİŞİM</span><h3>Yavşakça konuşmak</h3><p>Karşı tarafı önce umutlandırır, sonra “hallederiz ya” tonuyla bütün sorumluluğu buharlaştırır.</p></div><a class="service-link" href="#iletisim">Bunu satın al <span class="arrow">↗</span></a></div>
+            <img src="assets/turkish-tea.jpg" alt="Türk çayı ve sohbet masası" loading="lazy">
+          </article>
+          <article class="service-card" data-reveal>
+            <div class="service-card-copy"><div><span class="service-number">02 / GÖRSEL DAYATMA</span><h3>Ekran paylaşıp zorla video izletmek</h3><p>“Şuna bir bak” diyerek açar. Video bitene kadar çıkış kapısı kapanır.</p></div><a class="service-link" href="#iletisim">Bunu satın al <span class="arrow">↗</span></a></div>
+            <img src="assets/messy-desk.jpg" alt="Laptoplu dağınık çalışma masası" loading="lazy">
+          </article>
+          <article class="service-card" data-reveal>
+            <div class="service-card-copy"><div><span class="service-number">03 / MOTİVASYON</span><h3>Her gün “acil zengin olmamız lazım” demek</h3><p>Strateji yok. Baskı var. Cümle, takvimdeki her güne otomatik atanır.</p></div><a class="service-link" href="#iletisim">Bunu satın al <span class="arrow">↗</span></a></div>
+            <img src="assets/atakule-ankara.jpg" alt="Ankara silüeti ve Atakule" loading="lazy">
+          </article>
+          <article class="service-card" data-reveal>
+            <div class="service-card-copy"><div><span class="service-number">04 / İÇERİK TÜKETİMİ</span><h3>youtube’dan “muhacir” izlemek</h3><p>Algoritmanın en beklenmedik köşelerine gidilir. Geri dönüldüğünde iş hâlâ bekler.</p></div><a class="service-link" href="#iletisim">Bunu satın al <span class="arrow">↗</span></a></div>
+            <img src="assets/sleeping-office.jpg" alt="Çalışma masasında yorgunluk" loading="lazy">
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section accordion-section">
+      <div class="container accordion-layout">
+        <div data-reveal><p class="eyebrow">Sık sorulan gereksiz sorular</p><h2>Başlamadan önce daha fazla ertele.</h2></div>
+        <div class="accordion-list" data-reveal>
+          <div class="accordion-item"><button class="accordion-trigger" type="button" aria-expanded="true"><span class="accordion-title">İşe ne zaman başlarsınız?</span><span class="accordion-icon">+</span></button><div class="accordion-panel"><div><p>“Birazdan” cevabı, saat kavramından bağımsız çalışır. Duruma göre bugün, yarın veya uygun bir belirsizlikte başlayabiliriz.</p></div></div></div>
+          <div class="accordion-item"><button class="accordion-trigger" type="button" aria-expanded="false"><span class="accordion-title">Verdiğiniz sözleri tutuyor musunuz?</span><span class="accordion-icon">+</span></button><div class="accordion-panel"><div><p>Bu portfolyo, bu soruya cevap vermek için defalarca güncellenecekti. Görüldüğü gibi güncellenmedi. Cevap kendini verdi.</p></div></div></div>
+          <div class="accordion-item"><button class="accordion-trigger" type="button" aria-expanded="false"><span class="accordion-title">Panik atak geçirme hizmeti dahil mi?</span><span class="accordion-icon">+</span></button><div class="accordion-panel"><div><p>Temel pakette son dakika telaşı, üst pakette sesli “yandık” bildirimi, premium pakette bütün ekibi aynı anda paniğe sürükleme bulunur.</p></div></div></div>
+          <div class="accordion-item"><button class="accordion-trigger" type="button" aria-expanded="false"><span class="accordion-title">Tuzluçayır’a geliyor musunuz?</span><span class="accordion-icon">+</span></button><div class="accordion-panel"><div><p>Adres: Tuzluçayır/Ankara. Gelmeden önce mesaj atın. Cevap gelmezse doğru yerdesiniz.</p></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="yorumlar" class="section carousel-section">
+      <div class="container">
+        <div class="carousel-head" data-reveal><h2>İnsanlar neyi beklediğini bilmiyor, ama bekliyor.</h2><div class="carousel-controls"><button class="carousel-button" type="button" data-carousel-prev aria-label="Önceki yorum">←</button><button class="carousel-button" type="button" data-carousel-next aria-label="Sonraki yorum">→</button></div></div>
+        <div class="carousel-window" data-reveal>
+          <div class="carousel-track">
+            <article class="testimonial"><div class="testimonial-portrait"><img src="assets/sleeping-office.jpg" alt="Masada dinlenen çalışan" loading="lazy"></div><div><blockquote>“Söz verdi, sonra uyudu. Süreç tam olarak beklediğim kadar sürüncemede kaldı.”</blockquote><cite>— Eski iş ortağı, hâlâ geri dönüş bekliyor</cite></div></article>
+            <article class="testimonial"><div class="testimonial-portrait"><img src="assets/atakule-ankara.jpg" alt="Ankara'da şehir manzarası" loading="lazy"></div><div><blockquote>“Her gün acil zengin olmamız lazım dedi. Zengin olmadık. Ama cümle çok istikrarlıydı.”</blockquote><cite>— Finansal olarak aynı yerde duran tanık</cite></div></article>
+            <article class="testimonial"><div class="testimonial-portrait"><img src="assets/messy-desk.jpg" alt="Dağınık çalışma masası" loading="lazy"></div><div><blockquote>“Ekran paylaşımı açıldı. Video başladı. Hayatımın 18 dakikası geri gelmedi.”</blockquote><cite>— Zorunlu izleyici, toplantıdan çıkamadı</cite></div></article>
+          </div>
+        </div>
+        <div class="carousel-dots" aria-label="Yorum seçimi"><button class="carousel-dot is-active" type="button" aria-label="1. yorumu göster"></button><button class="carousel-dot" type="button" aria-label="2. yorumu göster"></button><button class="carousel-dot" type="button" aria-label="3. yorumu göster"></button></div>
+      </div>
+    </section>
+
+    <section id="iletisim" class="action">
+      <div class="container action-inner" data-reveal>
+        <p class="eyebrow" style="color: #fff"><span style="background: #fff"></span> Birlikte hiçbir şey yapmayalım</p>
+        <h2>Boş işinizi büyütelim.</h2>
+        <button class="button-primary magnetic" type="button" data-open-modal>Mehmet’e ulaş <span class="arrow">↗</span></button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-row"><strong>© Mehmet Ali Dülger</strong><span>Tuzluçayır / Ankara</span><div class="footer-links"><a href="#hikaye">Hikâye</a><a href="#hizmetler">Hizmetler</a><a href="#iletisim">İletişim</a></div></div>
+      <p class="credits">Görseller: <a href="https://commons.wikimedia.org/wiki/File:Atakule,_Ankara.jpg" target="_blank" rel="noreferrer">Ankara Atakule / Wikimedia Commons</a>, <a href="https://commons.wikimedia.org/wiki/File:Turkish_tea_glass.jpg" target="_blank" rel="noreferrer">Türk çayı bardağı / Wikimedia Commons</a>, <a href="https://img.unocero.com/2018/06/dormir-8-horas.jpg" target="_blank" rel="noreferrer">Ofis yorgunluğu / Unocero</a>, <a href="https://news.wpcarey.asu.edu/sites/g/files/litvpz706/files/capstone_project_the_messiness_of_execution_cropped.jpg" target="_blank" rel="noreferrer">Dağınık çalışma alanı / W. P. Carey</a>.</p>
+    </div>
+  </footer>
+
+  <dialog class="modal" aria-labelledby="modal-title">
+    <div class="modal-inner">
+      <button class="modal-close" type="button" data-close-modal aria-label="Pencereyi kapat">×</button>
+      <p class="eyebrow">Başvuru formu</p>
+      <h2 id="modal-title">Boş işinizi anlatın.</h2>
+      <form class="form-grid" id="contact-form">
+        <label class="form-field">Adınız<input name="name" type="text" required placeholder="Ad soyad"></label>
+        <label class="form-field">E-posta<input name="email" type="email" required placeholder="siz@ornek.com"></label>
+        <label class="form-field">Neyi ertelemek istiyorsunuz?<textarea name="message" required placeholder="Acil zengin olma planınız, izletmek istediğiniz video veya henüz başlamadığınız diğer fikirler..."></textarea></label>
+        <button class="button-primary form-submit" type="submit">Notu bırak <span class="arrow">↗</span></button>
+        <p class="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script>
+    (() => {
+      const body = document.body;
+      const loader = document.querySelector('.loader');
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      window.addEventListener('load', () => {
+        window.setTimeout(() => loader?.classList.add('is-done'), 650);
+      });
+
+      const navToggle = document.querySelector('.nav-toggle');
+      const navLinks = document.querySelector('.nav-links');
+      navToggle?.addEventListener('click', () => {
+        const isOpen = navLinks.classList.toggle('is-open');
+        navToggle.setAttribute('aria-expanded', String(isOpen));
+        navToggle.setAttribute('aria-label', isOpen ? 'Menüyü kapat' : 'Menüyü aç');
+        navToggle.textContent = isOpen ? '×' : '+';
+      });
+      navLinks?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+        navLinks.classList.remove('is-open');
+        navToggle?.setAttribute('aria-expanded', 'false');
+        if (navToggle) { navToggle.textContent = '+'; navToggle.setAttribute('aria-label', 'Menüyü aç'); }
+      }));
+
+      document.querySelectorAll('.accordion-trigger').forEach(trigger => {
+        trigger.addEventListener('click', () => {
+          const willOpen = trigger.getAttribute('aria-expanded') !== 'true';
+          document.querySelectorAll('.accordion-trigger').forEach(item => item.setAttribute('aria-expanded', 'false'));
+          trigger.setAttribute('aria-expanded', String(willOpen));
+        });
+      });
+
+      const track = document.querySelector('.carousel-track');
+      const dots = [...document.querySelectorAll('.carousel-dot')];
+      let slide = 0;
+      const setSlide = next => {
+        slide = (next + dots.length) % dots.length;
+        if (track) track.style.transform = `translateX(-${slide * 100}%)`;
+        dots.forEach((dot, index) => dot.classList.toggle('is-active', index === slide));
+      };
+      document.querySelector('[data-carousel-prev]')?.addEventListener('click', () => setSlide(slide - 1));
+      document.querySelector('[data-carousel-next]')?.addEventListener('click', () => setSlide(slide + 1));
+      dots.forEach((dot, index) => dot.addEventListener('click', () => setSlide(index)));
+      let carouselTimer = window.setInterval(() => setSlide(slide + 1), 6500);
+      document.querySelector('.carousel-window')?.addEventListener('mouseenter', () => window.clearInterval(carouselTimer));
+      document.querySelector('.carousel-window')?.addEventListener('mouseleave', () => { carouselTimer = window.setInterval(() => setSlide(slide + 1), 6500); });
+
+      const modal = document.querySelector('.modal');
+      const openModal = () => {
+        if (!modal) return;
+        if (typeof modal.showModal === 'function') modal.showModal();
+        else modal.setAttribute('open', '');
+        body.classList.add('is-locked');
+      };
+      const closeModal = () => {
+        if (!modal) return;
+        if (typeof modal.close === 'function') modal.close();
+        else modal.removeAttribute('open');
+        body.classList.remove('is-locked');
+      };
+      document.querySelectorAll('[data-open-modal]').forEach(button => button.addEventListener('click', openModal));
+      document.querySelector('[data-close-modal]')?.addEventListener('click', closeModal);
+      modal?.addEventListener('click', event => { if (event.target === modal) closeModal(); });
+      modal?.addEventListener('close', () => body.classList.remove('is-locked'));
+      document.querySelector('#contact-form')?.addEventListener('submit', event => {
+        event.preventDefault();
+        const status = event.currentTarget.querySelector('.form-status');
+        status.textContent = 'Not alındı. Cevap birazdan, muhtemelen.';
+        event.currentTarget.reset();
+      });
+
+      const revealItems = [...document.querySelectorAll('[data-reveal]')];
+      const reveal = element => element.classList.add('is-visible');
+      if ('IntersectionObserver' in window && !reduceMotion) {
+        const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+          if (entry.isIntersecting) { reveal(entry.target); observer.unobserve(entry.target); }
+        }), { threshold: .12 });
+        revealItems.forEach(item => observer.observe(item));
+      } else revealItems.forEach(reveal);
+
+      const scrubHeading = document.querySelector('[data-scrub]');
+      if (scrubHeading) {
+        const textNodes = [];
+        const walker = document.createTreeWalker(scrubHeading, NodeFilter.SHOW_TEXT);
+        while (walker.nextNode()) textNodes.push(walker.currentNode);
+        textNodes.forEach(node => {
+          const fragment = document.createDocumentFragment();
+          node.textContent.split(/(\s+)/).forEach(part => {
+            if (/\s+/.test(part) || !part) fragment.appendChild(document.createTextNode(part));
+            else { const word = document.createElement('span'); word.className = 'word'; word.textContent = part; fragment.appendChild(word); }
+          });
+          node.parentNode.replaceChild(fragment, node);
+        });
+        const words = [...scrubHeading.querySelectorAll('.word')];
+        const revealWords = () => {
+          const box = scrubHeading.getBoundingClientRect();
+          const progress = Math.max(0, Math.min(1, (window.innerHeight * .78 - box.top) / (box.height + window.innerHeight * .35)));
+          words.forEach((word, index) => word.classList.toggle('is-word-visible', index / words.length < progress));
+        };
+        window.addEventListener('scroll', revealWords, { passive: true });
+        revealWords();
+      }
+
+      if (window.gsap && window.ScrollTrigger && !reduceMotion) {
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.utils.toArray('.hero-photo-wrap').forEach(photo => gsap.fromTo(photo, { scale: .82, opacity: .65 }, { scale: 1, opacity: 1, ease: 'none', scrollTrigger: { trigger: photo, start: 'top 90%', end: 'bottom 20%', scrub: 1 } }));
+        gsap.to('.pin-column', { y: 0, scrollTrigger: { trigger: '.services-grid', start: 'top top+=120', end: 'bottom bottom-=120', pin: true, pinSpacing: false } });
+        gsap.utils.toArray('.service-card').forEach((card, index) => gsap.fromTo(card, { y: 42, opacity: .25, scale: .96 }, { y: 0, opacity: 1, scale: 1, duration: .9, delay: index * .04, ease: 'power3.out', scrollTrigger: { trigger: card, start: 'top 88%', toggleActions: 'play none none reverse' } }));
+        gsap.utils.toArray('.magnetic').forEach(button => {
+          button.addEventListener('pointermove', event => {
+            const rect = button.getBoundingClientRect();
+            gsap.to(button, { x: (event.clientX - rect.left - rect.width / 2) * .18, y: (event.clientY - rect.top - rect.height / 2) * .18, duration: .3, ease: 'power2.out' });
+          });
+          button.addEventListener('pointerleave', () => gsap.to(button, { x: 0, y: 0, duration: .6, ease: 'elastic.out(1, .35)' }));
+        });
+      } else if (!reduceMotion) {
+        document.querySelectorAll('.service-card').forEach(card => card.classList.add('is-visible'));
+      }
+    })();
+  </script>
+</body>
+</html>
